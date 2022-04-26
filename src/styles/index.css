@@ -1,12 +1,24 @@
+body{
+    background-color: rgb(248, 247, 242);
+    font-size: 35px;
+    color: rgb(59, 58, 58);
+}
+.listContainer{
+   
+    border: 1px solid rgb(190, 178, 178);
+    box-shadow: 2px 2px 4px #bdb8b8;
+}
+input{
+    width: 100%;
+    border: 0;
+}
 
-/* 
-
-    You can write your own styles here...
-    
-    
-    ...Or you can use the import command to include 
-    other sylesheets into your bunde as well, e.j:
-    
-    import 'relative/path/to/stylesheet.scss';
-
-*/
+.todos{
+    background: white;
+}
+.itemsLeft{
+    font-size: 20px;
+}
+.btn-close{
+    font-size: 20px;
+}
