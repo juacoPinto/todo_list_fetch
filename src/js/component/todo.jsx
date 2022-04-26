@@ -3,7 +3,7 @@ import React from "react";
 export const Todo = ({ todo }) => {
 	return (
 		<div className="d-flex justify-content-between">
-			{todo.name}{" "}
+			{todo.name}
 			<button
 				type="button"
 				className="btn-close float-right my-auto"

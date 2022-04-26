@@ -1,12 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { ToDoInput } from "./todoinput.jsx";
 import { ToDoList } from "./todolist.jsx";
+import { v4 as uuidv4 } from "uuid";
 
 //create your first component
 const Home = () => {
-	const [todos, setTodos] = useState([
-		{ id: 1, name: "Todo 1", complete: false },
-	]);
+	const [todos, setTodos] = useState([]);
+	const toDoNameRef = useRef();
+	const handleAddToDo = (e) => {
+		const name = toDoNameRef.current.value;
+		if (name == "") return;
+		setTodos((prevTodos) => {
+			return [
+				...prevTodos,
+				{ id: uuidv4(), name: name, complete: false },
+			];
+		});
+
+		toDoNameRef.current.value = null;
+		console.log(todos);
+	};
+
 	return (
 		<>
 			<h1 className="text-center">To Do List!</h1>
@@ -14,7 +28,19 @@ const Home = () => {
 				<div className="row">
 					<div className="col-md-12">
 						<div className="listContainer px-5 ">
-							<ToDoInput />
+							<input
+								ref={toDoNameRef}
+								type="text"
+								name=""
+								id=""
+								placeholder="Add a To Do"
+								onKeyDown={(e) => {
+									if (e.key === "Enter") {
+										handleAddToDo();
+									}
+								}}
+							/>
+
 							<ToDoList todos={todos} />
 							<div className="itemsLeft">
 								{todos.length} items left
