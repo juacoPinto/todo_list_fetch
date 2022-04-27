@@ -20,7 +20,12 @@ const Home = () => {
 		toDoNameRef.current.value = null;
 		console.log(todos);
 	};
-
+	const deleteTodo = (id) => {
+		const removeItem = todos.filter((todo) => {
+			return todo.id !== id;
+		});
+		setTodos(removeItem);
+	};
 	return (
 		<>
 			<h1 className="text-center">To Do List!</h1>
@@ -41,7 +46,7 @@ const Home = () => {
 								}}
 							/>
 
-							<ToDoList todos={todos} />
+							<ToDoList todos={todos} deleteTodo={deleteTodo} />
 							<div className="itemsLeft">
 								{todos.length} items left
 							</div>
