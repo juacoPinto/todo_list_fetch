@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { ToDoInput } from "./todoinput.jsx";
 import { ToDoList } from "./todolist.jsx";
 import { v4 as uuidv4 } from "uuid";
@@ -6,25 +6,75 @@ import { v4 as uuidv4 } from "uuid";
 //create your first component
 const Home = () => {
 	const [todos, setTodos] = useState([]);
+	console.log(todos);
+	const [todo, setTodo] = useState("");
 	const toDoNameRef = useRef();
-	const handleAddToDo = (e) => {
-		const name = toDoNameRef.current.value;
-		if (name == "") return;
-		setTodos((prevTodos) => {
-			return [
-				...prevTodos,
-				{ id: uuidv4(), name: name, complete: false },
-			];
-		});
+	const URL =
+		"https://assets.breatheco.de/apis/fake/todos/user/santiagodeaguirre";
+	useEffect(() => {
+		getTodos();
+	}, [todo]);
 
-		toDoNameRef.current.value = null;
-		console.log(todos);
+	const createUser = () => {
+		fetch(URL, {
+			method: "POST",
+			body: JSON.stringify({
+				// id: uuidv4(),
+				// name: toDoNameRef.current.value,
+				// complete: false,
+			}),
+			headers: {
+				"Content-type": "application/json",
+			},
+		})
+			.then((response) => response.json())
+			.then((json) => console.log(json));
 	};
-	const deleteTodo = (id) => {
-		const removeItem = todos.filter((todo) => {
-			return todo.id !== id;
+
+	const sendTodos = async (result) => {
+		const response = await fetch(URL, {
+			method: "PUT",
+			body: JSON.stringify(result),
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
+		const data = await response.json();
+		console.log(data);
+	};
+
+	const getTodos = async () => {
+		const response = await fetch(URL, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
+		const data = await response.json();
+		setTodos(data);
+	};
+
+	const addTodo = (e) => {
+		if (todo === "") {
+			return;
+		}
+		if (e.key === "Enter") {
+			const task = {
+				label: toDoNameRef.current.value,
+				done: false,
+			};
+			sendTodos([...todos, task]);
+			setTodo("");
+			toDoNameRef.current.value = "";
+		}
+	};
+
+	const deleteTodo = (i) => {
+		const removeItem = todos.filter((todo, index) => {
+			return index !== i;
 		});
 		setTodos(removeItem);
+		sendTodos(removeItem);
 	};
 	return (
 		<>
@@ -36,17 +86,16 @@ const Home = () => {
 							<input
 								ref={toDoNameRef}
 								type="text"
-								name=""
-								id=""
+								onChange={(e) => {}}
 								placeholder="Add a To Do"
-								onKeyDown={(e) => {
-									if (e.key === "Enter") {
-										handleAddToDo();
-									}
+								onKeyPress={(e) => {
+									addTodo(e);
+									setTodo(e.target.value);
 								}}
 							/>
 
 							<ToDoList todos={todos} deleteTodo={deleteTodo} />
+
 							<div className="itemsLeft">
 								{todos.length} items left
 							</div>

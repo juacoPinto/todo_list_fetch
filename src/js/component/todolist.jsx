@@ -1,8 +1,15 @@
 import React from "react";
 import { Todo } from "./todo.jsx";
 
-export const ToDoList = ({ todos, deleteTodo }) => {
+export const ToDoList = ({ todos, deleteTodo, index }) => {
 	return todos.map((todo, index) => {
-		return <Todo key={todo.id} todo={todo} deleteTodo={deleteTodo} />;
+		return (
+			<Todo
+				key={index}
+				todo={todo}
+				deleteTodo={deleteTodo}
+				index={index}
+			/>
+		);
 	});
 };
