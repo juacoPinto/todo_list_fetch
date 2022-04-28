@@ -11,6 +11,7 @@ const Home = () => {
 	const toDoNameRef = useRef();
 	const URL =
 		"https://assets.breatheco.de/apis/fake/todos/user/santiagodeaguirre";
+
 	useEffect(() => {
 		getTodos();
 	}, [todo]);
@@ -26,21 +27,21 @@ const Home = () => {
 			headers: {
 				"Content-type": "application/json",
 			},
-		})
-			.then((response) => response.json())
-			.then((json) => console.log(json));
+		}).then((response) => response.json());
+		// .then((json) => console.log(json));
 	};
 
-	const sendTodos = async (result) => {
-		const response = await fetch(URL, {
+	const sendTodos = (result) => {
+		const response = fetch(URL, {
 			method: "PUT",
 			body: JSON.stringify(result),
 			headers: {
 				"Content-Type": "application/json",
 			},
+		}).then((response) => {
+			console.log(response);
+			return response.json();
 		});
-		const data = await response.json();
-		console.log(data);
 	};
 
 	const getTodos = async () => {
@@ -54,28 +55,51 @@ const Home = () => {
 		setTodos(data);
 	};
 
-	const addTodo = (e) => {
+	const addTodo = () => {
 		if (todo === "") {
 			return;
 		}
-		if (e.key === "Enter") {
-			const task = {
-				label: toDoNameRef.current.value,
-				done: false,
-			};
-			sendTodos([...todos, task]);
-			setTodo("");
-			toDoNameRef.current.value = "";
-		}
+
+		const task = {
+			label: toDoNameRef.current.value,
+			done: false,
+		};
+		sendTodos([...todos, task]);
+		setTodos([...todos, task]);
+		setTodo("");
+		toDoNameRef.current.value = "";
 	};
 
-	const deleteTodo = (i) => {
-		const removeItem = todos.filter((todo, index) => {
-			return index !== i;
+	const deleteTodo = (label) => {
+		const removeItem = todos.filter((todo) => {
+			return todo.label !== label;
 		});
-		setTodos(removeItem);
+		if (todos.length === 1) {
+			console.log("almost there");
+			// handleReset(todo);
+			createUser();
+		}
 		sendTodos(removeItem);
+		setTodos(removeItem);
+		console.log(removeItem);
 	};
+	const resetUser = (url, options = {}) => {
+		fetch(url, options).then((response) => {
+			console.log(response);
+		});
+		return response.json();
+	};
+	const handleReset = (todo) => {
+		let label = todo.label;
+		let options = {
+			method: "DELETE",
+			headers: {
+				"Content-Type": "application/json",
+			},
+		};
+		resetUser(URL, label, options);
+	};
+
 	return (
 		<>
 			<h1 className="text-center">To Do List!</h1>
@@ -86,19 +110,29 @@ const Home = () => {
 							<input
 								ref={toDoNameRef}
 								type="text"
-								onChange={(e) => {}}
 								placeholder="Add a To Do"
-								onKeyPress={(e) => {
-									addTodo(e);
-									setTodo(e.target.value);
+								onKeyDown={(e) => {
+									if (e.key === "Enter") {
+										addTodo();
+										setTodo(e.target.value);
+									}
 								}}
 							/>
-
-							<ToDoList todos={todos} deleteTodo={deleteTodo} />
-
+							<ToDoList
+								todos={todos}
+								deleteTodo={deleteTodo}
+								label={todo.label}
+							/>
 							<div className="itemsLeft">
 								{todos.length} items left
 							</div>
+							<button
+								onClick={() => {
+									setTodos([]);
+									sendTodos([]);
+								}}>
+								DELETE ALL
+							</button>
 						</div>
 					</div>
 				</div>
