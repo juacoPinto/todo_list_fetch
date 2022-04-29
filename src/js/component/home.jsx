@@ -55,39 +55,47 @@ const Home = () => {
 		setTodos(data);
 	};
 
-	const addTodo = () => {
+	const addTodo = (e) => {
 		if (todo === "") {
 			return;
 		}
-
-		const task = {
-			label: toDoNameRef.current.value,
-			done: false,
-		};
-		sendTodos([...todos, task]);
-		setTodos([...todos, task]);
-		setTodo("");
-		toDoNameRef.current.value = "";
+		if (e.key === "Enter") {
+			const task = {
+				label: toDoNameRef.current.value,
+				done: false,
+			};
+			sendTodos([...todos, task]);
+			// setTodos([...todos, task]);
+			setTodo("");
+			toDoNameRef.current.value = "";
+		}
 	};
 
-	const deleteTodo = (label) => {
-		const removeItem = todos.filter((todo) => {
-			return todo.label !== label;
-		});
-		if (todos.length === 1) {
-			console.log("almost there");
-			// handleReset(todo);
-			createUser();
-		}
+	// const deleteTodo = (label) => {
+	// 	const removeItem = todos.filter((todo) => {
+	// 		return todo.label !== label;
+	// 	});
+	// 	if (todos.length === 1) {
+	// 		console.log("almost there");
+	// 		handleReset(todo);
+	// 		// createUser();
+	// 	}
+	// 	sendTodos(removeItem);
+	// 	setTodos(removeItem);
+	// 	console.log(removeItem);
+	// };
+
+	const deleteTodo = (id) => {
+		const removeItem = todos.filter((e, index) => index !== id);
 		sendTodos(removeItem);
 		setTodos(removeItem);
-		console.log(removeItem);
 	};
+
 	const resetUser = (url, options = {}) => {
 		fetch(url, options).then((response) => {
 			console.log(response);
+			return response.json();
 		});
-		return response.json();
 	};
 	const handleReset = (todo) => {
 		let label = todo.label;
@@ -98,6 +106,7 @@ const Home = () => {
 			},
 		};
 		resetUser(URL, label, options);
+		createUser();
 	};
 
 	return (
@@ -108,14 +117,14 @@ const Home = () => {
 					<div className="col-md-12">
 						<div className="listContainer px-5 ">
 							<input
+								onChange={(e) => {
+									setTodo(e.target.value);
+								}}
 								ref={toDoNameRef}
 								type="text"
 								placeholder="Add a To Do"
-								onKeyDown={(e) => {
-									if (e.key === "Enter") {
-										addTodo();
-										setTodo(e.target.value);
-									}
+								onKeyPress={(e) => {
+									addTodo(e);
 								}}
 							/>
 							<ToDoList
@@ -128,8 +137,7 @@ const Home = () => {
 							</div>
 							<button
 								onClick={() => {
-									setTodos([]);
-									sendTodos([]);
+									handleReset(todo);
 								}}>
 								DELETE ALL
 							</button>
