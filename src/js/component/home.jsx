@@ -19,31 +19,26 @@ const Home = () => {
 	const createUser = () => {
 		fetch(URL, {
 			method: "POST",
-			body: JSON.stringify({
-				// id: uuidv4(),
-				// name: toDoNameRef.current.value,
-				// complete: false,
-			}),
+			body: JSON.stringify([]),
 			headers: {
 				"Content-type": "application/json",
 			},
 		}).then((response) => response.json());
-		// .then((json) => console.log(json));
 	};
 
 	const sendTodos = (result) => {
-		const response = fetch(URL, {
+		fetch(URL, {
 			method: "PUT",
 			body: JSON.stringify(result),
 			headers: {
 				"Content-Type": "application/json",
 			},
-		}).then((response) => {
-			console.log(response);
-			return response.json();
+		}).then((data) => {
+			console.log(data);
+			return data.json();
 		});
 	};
-
+	//GET the data from the server
 	const getTodos = async () => {
 		const response = await fetch(URL, {
 			method: "GET",
@@ -71,22 +66,8 @@ const Home = () => {
 		}
 	};
 
-	// const deleteTodo = (label) => {
-	// 	const removeItem = todos.filter((todo) => {
-	// 		return todo.label !== label;
-	// 	});
-	// 	if (todos.length === 1) {
-	// 		console.log("almost there");
-	// 		handleReset(todo);
-	// 		// createUser();
-	// 	}
-	// 	sendTodos(removeItem);
-	// 	setTodos(removeItem);
-	// 	console.log(removeItem);
-	// };
-
 	const deleteTodo = (id) => {
-		const removeItem = todos.filter((e, index) => index !== id);
+		const removeItem = todos.filter((element, index) => index !== id);
 		sendTodos(removeItem);
 		setTodos(removeItem);
 	};
@@ -135,12 +116,12 @@ const Home = () => {
 							<div className="itemsLeft">
 								{todos.length} items left
 							</div>
-							<button
+							{/* <button
 								onClick={() => {
 									handleReset(todo);
 								}}>
 								DELETE ALL
-							</button>
+							</button> */}
 						</div>
 					</div>
 				</div>
